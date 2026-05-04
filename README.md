@@ -5,7 +5,7 @@
 [![NestJS](https://img.shields.io/badge/NestJS_11-API-E0234E?style=for-the-badge&logo=nestjs)](https://nestjs.com)
 [![Radix UI](https://img.shields.io/badge/Radix_UI-Design_System-2EAADC?style=for-the-badge&logo=radix-ui)](https://www.radix-ui.com/)
 
-> **Loot Ledger** é um sistema de gerenciamento financeiro de alta performance desenvolvido para o **Tech Challenge da FIAP (Fase 1)**. Ele combina uma arquitetura robusta em monorepo com uma interface baseada na estética **Hacker/Terminal**.
+> **Loot Ledger** é um sistema de gerenciamento financeiro desenvolvido para o **Tech Challenge da FIAP (Fase 1)**. Ele combina uma arquitetura robusta em monorepo com uma interface baseada na estética **Hacker/Terminal**.
 
 ---
 
