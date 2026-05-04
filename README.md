@@ -76,8 +76,6 @@ libs/
   └── ui/                 # Design System (Radix UI + Tailwind)
 ```
 
-## 👨‍💻 Autor
-
 Desenvolvido como parte do **Postech - Tech Challenge da FIAP**.
 
 ---
