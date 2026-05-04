@@ -1,11 +1,15 @@
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
 import './global.css';
-import { Space_Grotesk } from 'next/font/google';
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-});
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Loot Ledger // Terminal Operations',
+  description:
+    'Sistema de gerenciamento financeiro com estética Hacker/Terminal.',
+  keywords: ['finanças', 'ledger', 'hacker', 'terminal', 'fiap', 'ops'],
+};
 
 import { ToastProvider } from '../hooks/useToast';
 
