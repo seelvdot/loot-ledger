@@ -2,7 +2,13 @@
   "name": "@loot-ledger/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "nx run-many --targets=dev,serve --all",
+    "dev:ui": "nx dev loot-ledger-ui",
+    "dev:api": "nx serve loot-ledger-api",
+    "build": "nx run-many --target=build --all",
+    "test": "nx run-many --target=test --all"
+  },
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.14.5",
