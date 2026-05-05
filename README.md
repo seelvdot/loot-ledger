@@ -9,11 +9,11 @@
 
 ---
 
-## 🛠️ Arquitetura e Design System
+## Arquitetura e Design System
 
 O projeto utiliza o ecossistema **Nx** para gerenciar um monorepo moderno e escalável, com foco total em modularização e separação de interesses.
 
-### 🎨 Design System & UI
+### Design System & UI
 
 A base visual e funcional do projeto foi construída utilizando o **Radix UI Themes**. Escolhemos o Radix como fundação por ser um sistema de componentes _headless_ de alta qualidade, que nos permitiu:
 
@@ -21,7 +21,7 @@ A base visual e funcional do projeto foi construída utilizando o **Radix UI The
 - **Customização Total**: Utilizamos as primitivas do Radix integradas ao **Tailwind CSS v4** para criar a identidade visual Hacker sem sacrificar a semântica.
 - **Consistência**: O Design System é compartilhado entre as aplicações através de uma biblioteca dedicada (`libs/ui`), garantindo que a experiência visual seja idêntica em qualquer parte do ecossistema.
 
-### 🏗️ Tech Stack
+### Tech Stack
 
 - **Frontend (`apps/loot-ledger-ui`)**: Next.js 16 (App Router), Radix UI, Tailwind CSS v4 e React 19.
 - **Backend (`apps/loot-ledger-api`)**: NestJS 11 com arquitetura modular e persistência em memória isolada por sessão de usuário.
@@ -29,7 +29,7 @@ A base visual e funcional do projeto foi construída utilizando o **Radix UI The
 
 ---
 
-## 🚀 Como Executar o Projeto
+## Como Executar o Projeto
 
 Certifique-se de ter o **Node.js (v20+)** instalado em sua máquina.
 
@@ -66,7 +66,7 @@ npm run dev:api
 
 ---
 
-## 🧪 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```text
 apps/
