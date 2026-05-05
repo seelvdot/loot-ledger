@@ -1,4 +1,4 @@
-# 🦾 Loot Ledger // Terminal Operations
+# Loot Ledger // Terminal Operations
 
 [![Nx Monorepo](https://img.shields.io/badge/Nx-Monorepo-blueviolet?style=for-the-badge&logo=nx)](https://nx.dev)
 [![Next.js](https://img.shields.io/badge/Next.js_16-App_Router-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
