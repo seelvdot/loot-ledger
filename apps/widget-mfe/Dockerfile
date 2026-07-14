@@ -10,6 +10,10 @@ RUN npm ci --legacy-peer-deps
 # Copia todo o monorepo (respeitando o .dockerignore)
 COPY . .
 
+# Define a variável de ambiente em tempo de compilação
+ARG NX_PUBLIC_API_URL
+ENV NX_PUBLIC_API_URL=$NX_PUBLIC_API_URL
+
 # Executa o build usando o Nx
 RUN npx nx build widget_mfe --configuration=production
 

@@ -35,7 +35,7 @@ function ensureMFInit() {
       {
         name: 'widgetMfe',
         // O Nx expõe o mf-manifest.json gerado pelo ModuleFederationPlugin
-        entry: process.env.NEXT_PUBLIC_WIDGET_MFE_URL || 'http://localhost:4200/mf-manifest.json',
+        entry: process.env.NEXT_PUBLIC_WIDGET_MFE_URL,
         alias: 'widgetMfe',
       },
     ],

@@ -1,12 +1,12 @@
 'use client';
 
-import * as React from "react";
-import { useState, useRef } from "react";
-import { Upload, X, ImageIcon, Film, Music, File } from "lucide-react";
-import { cn } from "./utils";
+import * as React from 'react';
+import { useState, useRef } from 'react';
+import { Upload, X, ImageIcon, Film, Music, File } from 'lucide-react';
+import { cn } from './utils';
 
-const FONT_HEADER = "var(--font-header)";
-const FONT_MONO = "var(--font-mono)";
+const FONT_HEADER = 'var(--font-header)';
+const FONT_MONO = 'var(--font-mono)';
 
 const FILE_ICONS: Record<string, React.ReactNode> = {
   image: <ImageIcon size={14} className="text-sky-400" />,
@@ -16,11 +16,12 @@ const FILE_ICONS: Record<string, React.ReactNode> = {
 };
 
 function getFileType(name: string) {
-  const ext = name.split(".").pop()?.toLowerCase() ?? "";
-  if (["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(ext)) return "image";
-  if (["mp4", "mov", "webm"].includes(ext)) return "video";
-  if (["mp3", "wav", "ogg"].includes(ext)) return "audio";
-  return "default";
+  const ext = name.split('.').pop()?.toLowerCase() ?? '';
+  if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext))
+    return 'image';
+  if (['mp4', 'mov', 'webm'].includes(ext)) return 'video';
+  if (['mp3', 'wav', 'ogg'].includes(ext)) return 'audio';
+  return 'default';
 }
 
 export interface FileUploadZoneProps {
@@ -35,7 +36,9 @@ export function FileUploadZone({
   disabled = false,
 }: FileUploadZoneProps) {
   const [dragging, setDragging] = useState(false);
-  const [localFiles, setLocalFiles] = useState<{ name: string; size: string; data?: string }[]>([]);
+  const [localFiles, setLocalFiles] = useState<
+    { name: string; size: string; data?: string }[]
+  >([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isControlled = propFiles !== undefined;
@@ -44,27 +47,34 @@ export function FileUploadZone({
   const addFiles = (incoming: FileList | null) => {
     if (!incoming || disabled) return;
 
-    const promises = Array.from(incoming).map(f => {
-      return new Promise<{ name: string; size: string; data?: string }>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64String = reader.result as string;
-          const sizeStr = f.size < 1024 ? `${f.size} B` : f.size < 1024 * 1024 ? `${(f.size / 1024).toFixed(1)} KB` : `${(f.size / (1024 * 1024)).toFixed(1)} MB`;
-          resolve({
-            name: f.name,
-            size: sizeStr,
-            data: base64String
-          });
-        };
-        reader.readAsDataURL(f);
-      });
+    const promises = Array.from(incoming).map((f) => {
+      return new Promise<{ name: string; size: string; data?: string }>(
+        (resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64String = reader.result as string;
+            const sizeStr =
+              f.size < 1024
+                ? `${f.size} B`
+                : f.size < 1024 * 1024
+                  ? `${(f.size / 1024).toFixed(1)} KB`
+                  : `${(f.size / (1024 * 1024)).toFixed(1)} MB`;
+            resolve({
+              name: f.name,
+              size: sizeStr,
+              data: base64String,
+            });
+          };
+          reader.readAsDataURL(f);
+        },
+      );
     });
 
-    Promise.all(promises).then(newFiles => {
+    Promise.all(promises).then((newFiles) => {
       if (isControlled) {
         if (onChange) onChange([...files, ...newFiles]);
       } else {
-        setLocalFiles(prev => [...prev, ...newFiles]);
+        setLocalFiles((prev) => [...prev, ...newFiles]);
       }
     });
   };
@@ -74,7 +84,7 @@ export function FileUploadZone({
     if (isControlled) {
       if (onChange) onChange(files.filter((_, i) => i !== index));
     } else {
-      setLocalFiles(prev => prev.filter((_, i) => i !== index));
+      setLocalFiles((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
@@ -82,13 +92,13 @@ export function FileUploadZone({
     <div className="space-y-3">
       {!disabled && (
         <div
-          onDragOver={e => {
+          onDragOver={(e) => {
             if (disabled) return;
             e.preventDefault();
             setDragging(true);
           }}
           onDragLeave={() => setDragging(false)}
-          onDrop={e => {
+          onDrop={(e) => {
             if (disabled) return;
             e.preventDefault();
             setDragging(false);
@@ -99,26 +109,49 @@ export function FileUploadZone({
             inputRef.current?.click();
           }}
           className={cn(
-            "border border-dashed p-6 flex flex-col items-center gap-2 cursor-pointer transition-colors",
-            dragging ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-secondary/30",
-            disabled && "opacity-50 pointer-events-none cursor-not-allowed"
+            'border border-dashed p-6 flex flex-col items-center gap-2 cursor-pointer transition-colors',
+            dragging
+              ? 'border-primary bg-primary/5'
+              : 'border-border hover:border-primary/40 hover:bg-secondary/30',
+            disabled && 'opacity-50 pointer-events-none cursor-not-allowed',
           )}
         >
-          <Upload size={18} className={cn("transition-colors", dragging ? "text-primary" : "text-muted-foreground/50")} />
+          <Upload
+            size={18}
+            className={cn(
+              'transition-colors',
+              dragging ? 'text-primary' : 'text-muted-foreground/50',
+            )}
+          />
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-foreground font-space-grotesk" style={{ fontFamily: FONT_HEADER }}>
-              {dragging ? "Solte para enviar" : "Arraste arquivos aqui"}
+            <p
+              className="text-xs font-bold uppercase tracking-widest text-foreground font-space-grotesk"
+              style={{ fontFamily: FONT_HEADER }}
+            >
+              {dragging ? 'Solte para enviar' : 'Arraste arquivos aqui'}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">ou clique para procurar — Imagens, PDFs, Documentos</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              ou clique para procurar — Imagens, PDFs, Documentos
+            </p>
           </div>
-          <input ref={inputRef} type="file" multiple className="hidden" disabled={disabled} onChange={e => addFiles(e.target.files)} />
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            className="hidden"
+            disabled={disabled}
+            onChange={(e) => addFiles(e.target.files)}
+          />
         </div>
       )}
 
       {files.length > 0 && (
         <div className="border border-border divide-y divide-border">
           {files.map((f, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-2 hover:bg-secondary/20 transition-colors">
+            <div
+              key={i}
+              className="flex items-center gap-3 px-4 py-2 hover:bg-secondary/20 transition-colors"
+            >
               {FILE_ICONS[getFileType(f.name)] || FILE_ICONS.default}
               {f.data ? (
                 <a
@@ -126,9 +159,11 @@ export function FileUploadZone({
                     f.data.startsWith('http') || f.data.startsWith('data:')
                       ? f.data
                       : (() => {
-                          const apiHost = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
-                            ? 'https://api.stackevo.com.br'
-                            : 'http://localhost:3001';
+                          const apiHost =
+                            process.env.NEXT_PUBLIC_API_URL?.replace(
+                              '/api',
+                              '',
+                            );
                           const normalizedPath = f.data.startsWith('/uploads/')
                             ? `/api${f.data}`
                             : f.data;
@@ -144,9 +179,16 @@ export function FileUploadZone({
                   {f.name}
                 </a>
               ) : (
-                <span className="flex-1 text-xs text-foreground truncate">{f.name}</span>
+                <span className="flex-1 text-xs text-foreground truncate">
+                  {f.name}
+                </span>
               )}
-              <span className="text-[9px] text-muted-foreground shrink-0 font-mono" style={{ fontFamily: FONT_MONO }}>{f.size}</span>
+              <span
+                className="text-[9px] text-muted-foreground shrink-0 font-mono"
+                style={{ fontFamily: FONT_MONO }}
+              >
+                {f.size}
+              </span>
               {!disabled && (
                 <button
                   type="button"
