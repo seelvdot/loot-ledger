@@ -11,7 +11,13 @@ export async function fetchFromAPI<T>(endpoint: string): Promise<T> {
       }
     }
   }
-  const response = await fetch(`http://localhost:3001/api${endpoint}`, {
+  // Determinar a URL da API dinamicamente conforme o ambiente (local vs produção)
+  let apiBase = 'http://localhost:3001/api';
+  if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+    apiBase = 'https://api.stackevo.com.br/api';
+  }
+
+  const response = await fetch(`${apiBase}${endpoint}`, {
     headers,
   });
   if (!response.ok) {
