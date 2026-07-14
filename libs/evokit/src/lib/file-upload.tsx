@@ -125,7 +125,12 @@ export function FileUploadZone({
                   href={
                     f.data.startsWith('http') || f.data.startsWith('data:')
                       ? f.data
-                      : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'}${f.data}`
+                      : (() => {
+                          const apiHost = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
+                            ? 'https://api.stackevo.com.br'
+                            : 'http://localhost:3001';
+                          return `${apiHost}${f.data}`;
+                        })()
                   }
                   target="_blank"
                   rel="noopener noreferrer"
