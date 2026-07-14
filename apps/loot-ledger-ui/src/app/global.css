@@ -6,7 +6,15 @@
 /* Evokit Design Tokens */
 @import "../../../../libs/evokit/src/styles/theme.css";
 
+/* Mapeamento: variáveis do next/font → variáveis de design token do EvoKit.
+   O next/font gera --font-space-grotesk e --font-jetbrains-mono no <html>.
+   Aqui sobrescrevemos os tokens para usar as fontes otimizadas (sem FOUT). */
+:root {
+  --font-base: var(--font-space-grotesk, 'Space Grotesk', sans-serif);
+  --font-header: var(--font-space-grotesk, 'Space Grotesk', sans-serif);
+  --font-mono: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+}
 
 .container {
   @apply mx-auto px-4 sm:px-6 lg:px-8;
-}
+}
