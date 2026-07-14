@@ -129,7 +129,10 @@ export function FileUploadZone({
                           const apiHost = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
                             ? 'https://api.stackevo.com.br'
                             : 'http://localhost:3001';
-                          return `${apiHost}${f.data}`;
+                          const normalizedPath = f.data.startsWith('/uploads/')
+                            ? `/api${f.data}`
+                            : f.data;
+                          return `${apiHost}${normalizedPath}`;
                         })()
                   }
                   target="_blank"

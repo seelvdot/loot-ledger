@@ -117,7 +117,7 @@ export class TransactionsService {
     }
 
     fs.writeFileSync(join(uploadsDir, uniqueName), buffer);
-    return `/uploads/${uniqueName}`;
+    return `/api/uploads/${uniqueName}`;
   }
 
   create(
@@ -419,7 +419,7 @@ export class TransactionsService {
             selected.push({
               name: file.name,
               size: file.size,
-              data: `/uploads/${uniqueName}`,
+              data: `/api/uploads/${uniqueName}`,
             });
           }
         }
