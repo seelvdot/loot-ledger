@@ -1,0 +1,43 @@
+services:
+  loot-ledger-api:
+    build:
+      context: .
+      dockerfile: apps/loot-ledger-api/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+    networks:
+      - loot-ledger-network
+
+  widget-mfe:
+    build:
+      context: .
+      dockerfile: apps/widget-mfe/Dockerfile
+    ports:
+      - "4200:80"
+    networks:
+      - loot-ledger-network
+
+  loot-ledger-ui:
+    build:
+      context: .
+      dockerfile: apps/loot-ledger-ui/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:3001/api
+        - NEXT_PUBLIC_WIDGET_MFE_URL=http://localhost:4200/mf-manifest.json
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+    depends_on:
+      - loot-ledger-api
+      - widget-mfe
+    networks:
+      - loot-ledger-network
+
+networks:
+  loot-ledger-network:
+    driver: bridge

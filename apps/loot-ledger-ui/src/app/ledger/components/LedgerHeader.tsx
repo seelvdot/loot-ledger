@@ -1,5 +1,4 @@
-import { Heading, Text } from '@radix-ui/themes';
-import { Button } from '@loot-ledger/ui';
+import { Button } from '@core/evokit';
 
 interface LedgerHeaderProps {
   userName: string;
@@ -13,26 +12,27 @@ export function LedgerHeader({
   return (
     <div className="flex justify-between items-center">
       <div className="flex flex-col gap-1">
-        <Text
-          size="1"
-          className="text-lime-300 font-space-grotesk uppercase tracking-widest"
+        <span
+          className="text-primary text-[10px] uppercase tracking-widest"
+          style={{ fontFamily: 'var(--font-mono)' }}
         >
-          OPERATIONAL_SYSTEM // LOOT_LEDGER
-        </Text>
-        <Heading
-          size="8"
-          className="font-space-grotesk! uppercase text-neutral-100"
+          OPERATIONAL SYSTEM // LOOT LEDGER
+        </span>
+        <h1
+          className="text-3xl font-bold uppercase text-foreground"
+          style={{ fontFamily: 'var(--font-header)' }}
         >
-          BEM-VINDO, <span className="text-lime-300">{userName}</span>
-        </Heading>
+          BEM-VINDO, <span className="text-primary">{userName}</span>
+        </h1>
       </div>
-      <Button
-        size="3"
-        className="uppercase! font-space-grotesk! cursor-pointer!"
-        onClick={onNewTransaction}
-      >
-        Nova_Transação
-      </Button>
+      <div className="flex items-center gap-4">
+        <Button
+          size="md"
+          onClick={onNewTransaction}
+        >
+          Nova Transação
+        </Button>
+      </div>
     </div>
   );
 }

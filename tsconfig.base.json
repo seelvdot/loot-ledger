@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "paths": {
       "@loot-ledger/ui": ["./libs/ui/src/index.ts"],
-      "@loot-ledger/types": ["./libs/types/src/index.ts"]
+      "@loot-ledger/types": ["./libs/types/src/index.ts"],
+      "@core/evokit": ["./libs/evokit/src/index.ts"],
+      "widget_mfe/Module": ["./apps/widget-mfe/src/remote-entry.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery } from '../../hooks/useQuery';
-import { TransactionService } from '../../services/transaction.service';
+import { useEffect, useState } from 'react';
+import { useTransactionStore } from '../../store/useTransactionStore';
 import { Text } from '@radix-ui/themes';
 import TransactionModal from '../../components/TransactionModal';
 import { useAuth } from '../../hooks/useAuth';
@@ -10,23 +9,24 @@ import { LedgerHeader } from './components/LedgerHeader';
 import { FinancialSummary } from './components/FinancialSummary';
 import { RecentActivity } from './components/RecentActivity';
 import { useToast } from '../../hooks/useToast';
+import WidgetDashboard from '../../components/WidgetDashboard';
 
 export default function LedgerPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {
-    data: summary,
-    loading,
-    refetch,
-  } = useQuery(() => TransactionService.getSummary());
+  const { summary, loading, fetchSummary, createTransaction } =
+    useTransactionStore();
+
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
 
   const userName = user?.email ? user.email.split('@')[0] : 'Operador';
 
   const handleSave = async (data: any) => {
     try {
-      await TransactionService.create(data);
-      await refetch();
+      await createTransaction(data);
       setIsModalOpen(false);
       toast.success('Transação registrada no Ledger com sucesso.');
     } catch (err) {
@@ -39,7 +39,7 @@ export default function LedgerPage() {
     return (
       <div className="flex items-center justify-center py-20">
         <Text className="animate-pulse text-lime-300 font-space-grotesk uppercase">
-          SINCRONIZANDO_LEDGER...
+          SINCRONIZANDO LEDGER...
         </Text>
       </div>
     );
@@ -54,13 +54,31 @@ export default function LedgerPage() {
         onNewTransaction={() => setIsModalOpen(true)}
       />
 
-      <FinancialSummary
-        balance={balance}
-        totalIncome={totalIncome}
-        totalExpense={totalExpense}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Coluna da esquerda (menor): Saldo, Entradas, Saídas */}
+        <div className="lg:col-span-3 lg:sticky lg:top-[90px] self-start">
+          <div className="flex justify-between items-center px-1 mb-4">
+            <h3
+              className="uppercase text-foreground font-bold text-lg"
+              style={{ fontFamily: 'var(--font-header)' }}
+            >
+              RESUMO FINANCEIRO
+            </h3>
+          </div>
+          <FinancialSummary
+            balance={balance}
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+            className="flex flex-col gap-6 font-space-grotesk"
+          />
+        </div>
 
-      <RecentActivity transactions={recentTransactions} />
+        {/* Coluna da direita (segunda coluna, maior): Widgets e Últimas Transações */}
+        <div className="lg:col-span-9 flex flex-col gap-10">
+          <WidgetDashboard />
+          <RecentActivity transactions={recentTransactions} />
+        </div>
+      </div>
 
       {isModalOpen && (
         <TransactionModal

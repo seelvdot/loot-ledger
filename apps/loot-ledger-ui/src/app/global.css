@@ -1,109 +1,12 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@source "../../../../libs/**/*.{ts,tsx}";
+/* Scan evokit components for Tailwind class detection */
+@source "../../../../libs/evokit/src/lib/**/*.{ts,tsx}";
 
-@theme {
-  --color-brand: var(--color-lime-400);
-  --color-primary-contrast: var(--lime-contrast);
-  --color-surface: var(--gray-2);
+/* Evokit Design Tokens */
+@import "../../../../libs/evokit/src/styles/theme.css";
 
-  --font-space-grotesk: 'Space Grotesk', sans-serif;
-  --default-font-family: 'Space Grotesk', sans-serif;
-}
-
-.dark,
-.dark-theme {
-  --color-background: var(--color-neutral-950);
-
-  --lime-1: var(--color-lime-950);
-  --lime-2: var(--color-lime-900);
-  --lime-3: var(--color-lime-800);
-  --lime-4: var(--color-lime-700);
-  --lime-5: var(--color-lime-600);
-  --lime-6: var(--color-lime-500);
-  --lime-7: var(--color-lime-400);
-  --lime-8: var(--color-lime-300);
-  --lime-9: var(--color-lime-400);
-  --lime-10: var(--color-lime-300);
-  --lime-11: var(--color-lime-200);
-  --lime-12: var(--color-lime-50);
-
-  --gray-1: var(--color-neutral-950);
-  --gray-2: var(--color-neutral-900);
-  --gray-3: var(--color-neutral-850);
-  --gray-4: var(--color-neutral-800);
-  --gray-5: var(--color-neutral-700);
-  --gray-6: var(--color-neutral-600);
-  --gray-7: var(--color-neutral-500);
-  --gray-8: var(--color-neutral-400);
-  --gray-9: var(--color-neutral-500);
-  --gray-10: var(--color-neutral-400);
-  --gray-11: var(--color-neutral-300);
-  --gray-12: var(--color-neutral-100);
-
-  --lime-contrast: var(--color-lime-950);
-  --lime-surface: color-mix(in srgb, var(--color-lime-950), transparent 50%);
-  --gray-contrast: var(--color-white);
-}
-
-.vhs-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-  filter: blur(0.4px);
-  overflow: hidden;
-}
-
-.vhs-overlay:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 200%;
-  background:
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-    linear-gradient(
-      90deg,
-      rgba(255, 0, 0, 0.06),
-      rgba(0, 255, 0, 0.02),
-      rgba(0, 0, 255, 0.06)
-    );
-  background-size:
-    100% 5px,
-    3px 100%;
-  animation:
-    animation-vhs 60s ease-in-out infinite,
-    animation-opacity-scanlines 0.5s ease-in-out alternate infinite;
-}
 
 .container {
   @apply mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-@keyframes animation-vhs {
-  0% {
-    transform: translateY(0%);
-  }
-  100% {
-    transform: translateY(-50%);
-  }
-}
-
-@keyframes animation-opacity-scanlines {
-  to {
-    opacity: 0.6;
-  }
-}
-
-@keyframes animation-opacity {
-  to {
-    opacity: 0.2;
-    background-position: 300% 0%;
-  }
 }

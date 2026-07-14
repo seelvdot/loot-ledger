@@ -1,4 +1,17 @@
-import { Table, Text, Badge, Tooltip, IconButton } from '@radix-ui/themes';
+import {
+  Badge,
+  Button,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  Dropdown,
+  DropdownItem,
+  DropdownLabel,
+} from '@core/evokit';
+import { Tooltip } from '@radix-ui/themes';
 import { EditOne, Eye, Trash } from '@mynaui/icons-react';
 import { Transaction } from '../../../../types/transaction';
 
@@ -18,134 +31,150 @@ export function TransactionTable({
   onDetail,
 }: TransactionTableProps) {
   return (
-    <div className="ring-1 ring-neutral-300/10 bg-neutral-100/2.5">
-      <div className="overflow-x-auto">
-        <Table.Root variant="surface">
-          <Table.Header>
-            <Table.Row className="uppercase font-space-grotesk text-md text-lime-300/50">
-              <Table.ColumnHeaderCell>Data</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Descrição</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Observação</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Categoria</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Tipo</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell align="right">
-                Valor
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell align="center">
-                Ações
-              </Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-secondary/50 text-xs">
+          <TableHead className="py-2">Data</TableHead>
+          <TableHead className="py-2">Descrição</TableHead>
+          <TableHead className="py-2">Observação</TableHead>
+          <TableHead className="py-2">Categoria</TableHead>
+          <TableHead className="py-2">Subcategoria</TableHead>
+          <TableHead className="py-2">Tipo</TableHead>
+          <TableHead className="py-2 text-right">Valor</TableHead>
+          <TableHead className="py-2 text-center">Ações</TableHead>
+        </TableRow>
+      </TableHeader>
 
-          <Table.Body>
-            {loading ? (
-              <Table.Row>
-                <Table.Cell colSpan={6} align="center" className="py-10">
-                  <Text className="animate-pulse text-lime-300 font-space-grotesk uppercase tracking-widest text-xs">
-                    SINCRONIZANDO_DADOS_DO_SERVIDOR...
-                  </Text>
-                </Table.Cell>
-              </Table.Row>
-            ) : transactions.length === 0 ? (
-              <Table.Row>
-                <Table.Cell
-                  colSpan={6}
-                  align="center"
-                  className="py-10 text-neutral-500 font-space-grotesk uppercase text-xs"
+      <TableBody>
+        {loading ? (
+          <TableRow>
+            <TableCell colSpan={8} className="text-center py-10">
+              <span
+                className="animate-pulse text-primary font-bold uppercase tracking-widest text-xs font-mono"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                SINCRONIZANDO DADOS DO SERVIDOR...
+              </span>
+            </TableCell>
+          </TableRow>
+        ) : transactions.length === 0 ? (
+          <TableRow>
+            <TableCell
+              colSpan={8}
+              className="text-center py-10 text-muted-foreground uppercase text-xs font-mono"
+              style={{ fontFamily: 'var(--font-mono)' }}
+            >
+              Nenhum registro encontrado no Ledger.
+            </TableCell>
+          </TableRow>
+        ) : (
+          transactions.map((t) => {
+            const subs = t.subcategory
+              ? t.subcategory
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+              : [];
+
+            return (
+              <TableRow key={t.id}>
+                <TableCell
+                  className="py-1.5 text-muted-foreground text-xs font-mono"
+                  style={{ fontFamily: 'var(--font-mono)' }}
                 >
-                  Nenhum registro encontrado no Ledger.
-                </Table.Cell>
-              </Table.Row>
-            ) : (
-              transactions.map((t) => (
-                <Table.Row
-                  key={t.id}
-                  className="hover:bg-lime-300/5 transition-colors border-b border-neutral-400/10 font-space-grotesk"
+                  {new Date(t.date).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="py-1.5 font-medium text-foreground">
+                  {t.description}
+                </TableCell>
+                <TableCell
+                  className="py-1.5 text-muted-foreground max-w-[200px] truncate"
+                  title={t.observations}
                 >
-                  <Table.Cell className="text-neutral-400 text-xs">
-                    {new Date(t.date).toLocaleDateString()}
-                  </Table.Cell>
-                  <Table.Cell className="font-normal text-neutral-200">
-                    {t.description}
-                  </Table.Cell>
-                  <Table.Cell
-                    className="font-normal text-neutral-200"
-                    title={t.observations}
-                  >
-                    {t.observations && t.observations.length > 50
-                      ? t.observations?.substring(0, 50) + '...'
-                      : t.observations || '-'}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge
-                      variant="outline"
-                      color="gray"
-                      className="uppercase text-[9px] font-space-grotesk!"
-                    >
-                      {t.category}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge
-                      color={t.type === 'INCOME' ? 'lime' : 'red'}
-                      variant="soft"
-                      className="uppercase text-[9px] font-space-grotesk!"
-                    >
-                      {t.type === 'INCOME' ? 'Entrada' : 'Saída'}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell
-                    align="right"
-                    className={`font-mono ${t.type === 'INCOME' ? 'text-lime-400' : 'text-red-400'}`}
-                  >
-                    {t.type === 'INCOME' ? '+' : '-'} R${' '}
-                    {t.amount.toLocaleString('pt-BR', {
-                      minimumFractionDigits: 1,
-                    })}
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <div className="flex gap-4 justify-center">
-                      <Tooltip content="Editar">
-                        <IconButton
-                          size="1"
-                          variant="ghost"
-                          color="gray"
-                          onClick={() => onEdit(t)}
-                          className="cursor-pointer!"
-                        >
-                          <EditOne size={16} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Detalhes">
-                        <IconButton
-                          size="1"
-                          variant="ghost"
-                          color="gray"
-                          onClick={() => onDetail(t)}
-                          className="cursor-pointer!"
-                        >
-                          <Eye size={16} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Deletar">
-                        <IconButton
-                          size="1"
-                          variant="ghost"
-                          color="red"
-                          onClick={() => onDelete(t.id)}
-                          className="cursor-pointer!"
-                        >
-                          <Trash size={16} />
-                        </IconButton>
-                      </Tooltip>
+                  {t.observations || '-'}
+                </TableCell>
+                <TableCell className="py-1.5">
+                  <Badge variant="outline">{t.category}</Badge>
+                </TableCell>
+                <TableCell className="py-1.5">
+                  {subs.length === 0 ? (
+                    <span className="text-muted-foreground">-</span>
+                  ) : subs.length === 1 ? (
+                    <Badge variant="outline">{subs[0]}</Badge>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline">{subs[0]}</Badge>
+                      <Dropdown
+                        align="right"
+                        trigger={
+                          <button className="text-[10px] bg-secondary border border-border px-1 py-0.5 text-primary hover:bg-primary/10 transition-colors uppercase font-mono font-bold cursor-pointer">
+                            +{subs.length - 1}
+                          </button>
+                        }
+                      >
+                        <DropdownLabel>Subcategorias</DropdownLabel>
+                        {subs.map((s, i) => (
+                          <DropdownItem key={i} className="text-xs uppercase">
+                            {s}
+                          </DropdownItem>
+                        ))}
+                      </Dropdown>
                     </div>
-                  </Table.Cell>
-                </Table.Row>
-              ))
-            )}
-          </Table.Body>
-        </Table.Root>
-      </div>
-    </div>
+                  )}
+                </TableCell>
+                <TableCell className="py-1.5">
+                  <Badge variant={t.type === 'INCOME' ? 'success' : 'danger'}>
+                    {t.type === 'INCOME' ? 'Entrada' : 'Saída'}
+                  </Badge>
+                </TableCell>
+                <TableCell
+                  className={`py-1.5 text-right font-bold font-mono ${
+                    t.type === 'INCOME' ? 'text-primary' : 'text-rose-400'
+                  }`}
+                  style={{ fontFamily: 'var(--font-mono)' }}
+                >
+                  {t.type === 'INCOME' ? '+' : '-'} R${' '}
+                  {t.amount.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                  })}
+                </TableCell>
+                <TableCell className="py-1.5">
+                  <div className="flex gap-2 justify-center">
+                    <Tooltip content="Editar">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onEdit(t)}
+                      >
+                        <EditOne size={16} />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip content="Detalhes">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onDetail(t)}
+                      >
+                        <Eye size={16} />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip content="Deletar">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onDelete(t.id)}
+                        className="text-rose-400 hover:text-rose-500 hover:bg-rose-500/10"
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })
+        )}
+      </TableBody>
+    </Table>
   );
 }

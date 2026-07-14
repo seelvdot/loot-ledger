@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { Heading, Text } from '@radix-ui/themes';
-import { Button } from '@loot-ledger/ui';
+import { Button } from '@core/evokit';
 
 import { Transaction } from '../../../types/transaction';
 
@@ -12,53 +11,56 @@ export function RecentActivity({ transactions }: RecentActivityProps) {
   return (
     <div className="flex flex-col gap-4 font-space-grotesk">
       <div className="flex justify-between items-center px-1">
-        <Heading
-          size="4"
-          className="uppercase text-neutral-200 font-space-grotesk!"
+        <h3
+          className="uppercase text-foreground font-bold text-lg"
+          style={{ fontFamily: 'var(--font-header)' }}
         >
-          ÚLTIMAS_TRANSAÇÕES
-        </Heading>
+          ÚLTIMAS TRANSAÇÕES
+        </h3>
         <Link href="/ledger/transactions">
           <Button
             variant="outline"
-            size="1"
-            className="uppercase! text-lime-300 hover:text-lime-400 font-space-grotesk cursor-pointer!"
+            size="sm"
           >
-            Ver_Todas
+            Ver Todas
           </Button>
         </Link>
       </div>
 
-      <div className="ring-1 ring-neutral-300/10 bg-neutral-100/2.5 divide-y divide-neutral-300/5">
+      <div className="border border-border bg-card divide-y divide-border/50">
         {transactions.length === 0 ? (
-          <div className="p-10 text-center text-neutral-500 uppercase text-xs">
+          <div
+            className="p-10 text-center text-muted-foreground uppercase text-xs"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
             Nenhum registro encontrado.
           </div>
         ) : (
           transactions.map((t) => (
             <div
               key={t.id}
-              className="p-5 flex items-center justify-between hover:bg-lime-300/5 transition-colors"
+              className="p-5 flex items-center justify-between hover:bg-secondary/20 transition-colors"
             >
               <div className="flex flex-col">
-                <Text className="text-neutral-200 font-medium block">
+                <span className="text-foreground font-medium block text-sm">
                   {t.description}
-                </Text>
-                <Text
-                  size="1"
-                  className="text-neutral-500 uppercase text-[10px]"
+                </span>
+                <span
+                  className="text-muted-foreground uppercase text-[10px]"
+                  style={{ fontFamily: 'var(--font-mono)' }}
                 >
                   {t.category} • {new Date(t.date).toLocaleDateString()}
-                </Text>
+                </span>
               </div>
-              <Text
-                className={`font-mono font-bold ${t.type === 'INCOME' ? 'text-lime-400' : 'text-red-400'}`}
+              <span
+                className={`font-bold text-sm ${t.type === 'INCOME' ? 'text-primary' : 'text-rose-400'}`}
+                style={{ fontFamily: 'var(--font-mono)' }}
               >
                 {t.type === 'INCOME' ? '+' : '-'} R${' '}
                 {t.amount.toLocaleString('pt-BR', {
                   minimumFractionDigits: 2,
                 })}
-              </Text>
+              </span>
             </div>
           ))
         )}

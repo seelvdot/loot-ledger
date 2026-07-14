@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Scan evokit components for Tailwind class detection */
+@source "../../../libs/evokit/src/lib/**/*.{ts,tsx}";
+
+/* Evokit Design Tokens */
+@import "../../../libs/evokit/src/styles/theme.css";

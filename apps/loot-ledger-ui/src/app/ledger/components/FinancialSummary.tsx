@@ -1,86 +1,91 @@
-import { Heading, Text, Badge } from '@radix-ui/themes';
+import { Card, Badge } from '@core/evokit';
 
 interface FinancialSummaryProps {
   balance: number;
   totalIncome: number;
   totalExpense: number;
+  className?: string;
 }
 
 export function FinancialSummary({
   balance,
   totalIncome,
   totalExpense,
+  className = "grid grid-cols-1 md:grid-cols-3 gap-6 font-space-grotesk",
 }: FinancialSummaryProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-space-grotesk">
-      <div className="ring-1 ring-neutral-300/10 bg-neutral-100/2.5 p-6 flex flex-col gap-4">
+    <div className={className}>
+      <Card className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
-          <Badge
-            color="gray"
-            variant="surface"
-            className="uppercase text-[9px] font-space-grotesk!"
-          >
+          <Badge variant="outline">
             Saldo Atual
           </Badge>
         </div>
         <div>
-          <Text size="1" className="text-neutral-500 uppercase mb-1 block">
+          <span
+            className="text-muted-foreground text-[10px] uppercase mb-1 block"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
             Disponível_em_Conta
-          </Text>
-          <Heading
-            size="7"
-            className={`font-space-grotesk! ${balance >= 0 ? 'text-lime-300' : 'text-red-400'}`}
+          </span>
+          <h2
+            className={`text-2xl font-bold ${balance >= 0 ? 'text-primary' : 'text-rose-400'}`}
+            style={{ fontFamily: 'var(--font-header)' }}
           >
             R$ {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </Heading>
+          </h2>
         </div>
-      </div>
+      </Card>
 
-      <div className="ring-1 ring-neutral-300/10 bg-neutral-100/2.5 p-6 flex flex-col gap-4">
+      <Card className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
-          <Badge
-            color="lime"
-            variant="soft"
-            className="uppercase text-[9px] font-space-grotesk!"
-          >
+          <Badge variant="success">
             Entradas
           </Badge>
         </div>
         <div>
-          <Text size="1" className="text-neutral-500 uppercase mb-1 block">
+          <span
+            className="text-muted-foreground text-[10px] uppercase mb-1 block"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
             Total_Acumulado
-          </Text>
-          <Heading size="7" className="font-space-grotesk! text-neutral-100">
+          </span>
+          <h2
+            className="text-2xl font-bold text-foreground"
+            style={{ fontFamily: 'var(--font-header)' }}
+          >
             + R${' '}
             {totalIncome.toLocaleString('pt-BR', {
               minimumFractionDigits: 2,
             })}
-          </Heading>
+          </h2>
         </div>
-      </div>
+      </Card>
 
-      <div className="ring-1 ring-neutral-300/10 bg-neutral-100/2.5 p-6 flex flex-col gap-4">
+      <Card className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
-          <Badge
-            color="red"
-            variant="soft"
-            className="uppercase text-[9px] font-space-grotesk!"
-          >
+          <Badge variant="danger">
             Saídas
           </Badge>
         </div>
         <div>
-          <Text size="1" className="text-neutral-500 uppercase mb-1 block">
+          <span
+            className="text-muted-foreground text-[10px] uppercase mb-1 block"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
             Total_Gastos
-          </Text>
-          <Heading size="7" className="font-space-grotesk! text-neutral-100">
+          </span>
+          <h2
+            className="text-2xl font-bold text-foreground"
+            style={{ fontFamily: 'var(--font-header)' }}
+          >
             - R${' '}
             {totalExpense.toLocaleString('pt-BR', {
               minimumFractionDigits: 2,
             })}
-          </Heading>
+          </h2>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

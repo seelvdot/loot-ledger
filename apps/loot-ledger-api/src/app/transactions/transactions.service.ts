@@ -1,5 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import { join } from 'path';
+
+export interface Attachment {
+  name: string;
+  size: string;
+  data?: string;
+}
 
 export interface Transaction {
   id: string;
@@ -7,8 +15,10 @@ export interface Transaction {
   amount: number;
   type: 'INCOME' | 'EXPENSE';
   category: string;
+  subcategory?: string;
   date: string;
   observations?: string;
+  attachments?: Attachment[];
   createdAt: string;
 }
 
@@ -91,13 +101,49 @@ export class TransactionsService {
     };
   }
 
+  private saveAttachment(fileName: string, base64Data: string): string {
+    const matches = base64Data.match(/^data:(.+);base64,(.+)$/);
+    if (!matches) {
+      return base64Data;
+    }
+
+    const fileContent = matches[2];
+    const buffer = Buffer.from(fileContent, 'base64');
+    const uniqueName = `${randomUUID()}-${fileName.replace(/\s+/g, '_')}`;
+    const uploadsDir = join(process.cwd(), 'uploads');
+    
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    fs.writeFileSync(join(uploadsDir, uniqueName), buffer);
+    return `/uploads/${uniqueName}`;
+  }
+
   create(
     userId: string,
     data: Omit<Transaction, 'id' | 'createdAt'>,
   ): Transaction {
     const userTransactions = this.transactionsByUser.get(userId) || [];
+    
+    let processedAttachments: Attachment[] | undefined = undefined;
+    if (data.attachments) {
+      processedAttachments = data.attachments.map((att) => {
+        if (att.data) {
+          const relativeUrl = this.saveAttachment(att.name, att.data);
+          return {
+            name: att.name,
+            size: att.size,
+            data: relativeUrl,
+          };
+        }
+        return att;
+      });
+    }
+
     const newTransaction: Transaction = {
       ...data,
+      attachments: processedAttachments,
       id: randomUUID(),
       createdAt: new Date().toISOString(),
     };
@@ -115,7 +161,27 @@ export class TransactionsService {
     const index = userTransactions.findIndex((t) => t.id === id);
     if (index === -1) return null;
 
-    userTransactions[index] = { ...userTransactions[index], ...data };
+    let processedAttachments: Attachment[] | undefined = undefined;
+    if (data.attachments) {
+      processedAttachments = data.attachments.map((att) => {
+        if (att.data) {
+          const relativeUrl = this.saveAttachment(att.name, att.data);
+          return {
+            name: att.name,
+            size: att.size,
+            data: relativeUrl,
+          };
+        }
+        return att;
+      });
+    }
+
+    const updatedData = {
+      ...data,
+      ...(data.attachments !== undefined && { attachments: processedAttachments }),
+    };
+
+    userTransactions[index] = { ...userTransactions[index], ...updatedData };
     this.transactionsByUser.set(userId, userTransactions);
     return userTransactions[index];
   }
@@ -124,6 +190,8 @@ export class TransactionsService {
     const userTransactions = this.transactionsByUser.get(userId) || [];
     const index = userTransactions.findIndex((t) => t.id === id);
     if (index === -1) return false;
+
+    // Opcionalmente podemos excluir arquivos físicos vinculados à transação aqui se desejado
 
     userTransactions.splice(index, 1);
     this.transactionsByUser.set(userId, userTransactions);
@@ -164,6 +232,120 @@ export class TransactionsService {
     };
   }
 
+  getCategories(userId: string): string[] {
+    const transactions = this.transactionsByUser.get(userId) || [];
+    const categories = new Set(transactions.map((t) => t.category));
+    return Array.from(categories).sort();
+  }
+
+  getSubcategories(userId: string): string[] {
+    const transactions = this.transactionsByUser.get(userId) || [];
+    const subcategoriesSet = new Set<string>();
+    
+    transactions.forEach((t) => {
+      if (t.subcategory) {
+        t.subcategory
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .forEach((sub) => subcategoriesSet.add(sub));
+      }
+    });
+
+    return Array.from(subcategoriesSet).sort();
+  }
+
+  getWidgetData(
+    userId: string,
+    query: {
+      period?: '7_DAYS' | '30_DAYS' | 'THIS_MONTH' | 'ALL_TIME';
+      type?: 'ALL' | 'INCOME' | 'EXPENSE';
+      category?: string;
+      subcategory?: string;
+      widgetType?: 'NUMERIC' | 'GRAPHIC';
+    },
+  ) {
+    let transactions = this.transactionsByUser.get(userId) || [];
+
+    // 1. Filtrar por período
+    const now = new Date();
+    if (query.period === '7_DAYS') {
+      const limit = new Date();
+      limit.setDate(limit.getDate() - 7);
+      limit.setHours(0, 0, 0, 0);
+      transactions = transactions.filter((t) => new Date(t.date) >= limit);
+    } else if (query.period === '30_DAYS') {
+      const limit = new Date();
+      limit.setDate(limit.getDate() - 30);
+      limit.setHours(0, 0, 0, 0);
+      transactions = transactions.filter((t) => new Date(t.date) >= limit);
+    } else if (query.period === 'THIS_MONTH') {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      transactions = transactions.filter((t) => new Date(t.date) >= startOfMonth);
+    }
+
+    // 2. Filtrar por tipo (INCOME/EXPENSE)
+    if (query.type && query.type !== 'ALL') {
+      transactions = transactions.filter((t) => t.type === query.type);
+    }
+
+    // 3. Filtrar por categoria
+    if (query.category && query.category !== 'ALL') {
+      transactions = transactions.filter(
+        (t) => t.category.toLowerCase() === query.category!.toLowerCase(),
+      );
+    }
+
+    // 3.1. Filtrar por subcategoria
+    if (query.subcategory && query.subcategory !== 'ALL') {
+      const searchSub = query.subcategory.toLowerCase().trim();
+      transactions = transactions.filter((t) => {
+        if (!t.subcategory) return false;
+        const subs = t.subcategory.split(',').map((s) => s.trim().toLowerCase());
+        return subs.includes(searchSub);
+      });
+    }
+
+    // 4. Agrupar/Calcular com base no widgetType
+    if (query.widgetType === 'NUMERIC') {
+      const total = transactions.reduce((acc, t) => acc + t.amount, 0);
+      return { value: Number(total.toFixed(2)) };
+    } else {
+      // GRAPHIC: agrupar por categoria se category for 'ALL', senão agrupar por dia
+      if (!query.category || query.category === 'ALL') {
+        const categoryMap = new Map<string, number>();
+        transactions.forEach((t) => {
+          const cat = t.category;
+          categoryMap.set(cat, (categoryMap.get(cat) || 0) + t.amount);
+        });
+
+        const data = Array.from(categoryMap.entries()).map(([name, value]) => ({
+          name: name.toUpperCase(),
+          value: Number(value.toFixed(2)),
+        }));
+        return { data };
+      } else {
+        const dateMap = new Map<string, number>();
+        // Ordenar transações por data crescente para o gráfico
+        const sortedTxs = [...transactions].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
+
+        sortedTxs.forEach((t) => {
+          const d = new Date(t.date);
+          const key = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+          dateMap.set(key, (dateMap.get(key) || 0) + t.amount);
+        });
+
+        const data = Array.from(dateMap.entries()).map(([name, value]) => ({
+          name,
+          value: Number(value.toFixed(2)),
+        }));
+        return { data };
+      }
+    }
+  }
+
   initializeForUser(userId: string) {
     this.transactionsByUser.set(userId, []);
     this.seed(userId);
@@ -185,6 +367,14 @@ export class TransactionsService {
       { desc: 'Gasolina', cat: 'Transporte', type: 'EXPENSE' },
     ];
 
+    const subcategoriesPool = ['Mercado', 'Combustível', 'Viagem', 'Assinatura', 'Serviço', 'Saúde', 'Trabalho'];
+    const attachmentsPool = [
+      { name: 'recibo-compra.pdf', size: '142 KB' },
+      { name: 'comprovante-pix.png', size: '2.1 MB' },
+      { name: 'fatura-energia.pdf', size: '480 KB' },
+      { name: 'nota-fiscal.png', size: '1.2 MB' },
+    ];
+
     for (let i = 0; i < 15; i++) {
       const item =
         descriptions[Math.floor(Math.random() * descriptions.length)];
@@ -196,13 +386,55 @@ export class TransactionsService {
           ? 1000 + Math.random() * 4000
           : 10 + Math.random() * 400;
 
+      // Gerar subcategoria aleatória (60% de chance, podendo ter 1 ou 2)
+      let subcategory: string | undefined = undefined;
+      if (Math.random() < 0.6) {
+        const count = Math.floor(Math.random() * 2) + 1;
+        const selected: string[] = [];
+        for (let k = 0; k < count; k++) {
+          const randomSub = subcategoriesPool[Math.floor(Math.random() * subcategoriesPool.length)];
+          if (!selected.includes(randomSub)) {
+            selected.push(randomSub);
+          }
+        }
+        subcategory = selected.join(',');
+      }
+
+      // Gerar anexos aleatórios (40% de chance, podendo ter 1 ou 2)
+      let attachments: any[] | undefined = undefined;
+      if (Math.random() < 0.4) {
+        const count = Math.floor(Math.random() * 2) + 1;
+        const selected: any[] = [];
+        for (let k = 0; k < count; k++) {
+          const file = attachmentsPool[Math.floor(Math.random() * attachmentsPool.length)];
+          if (!selected.some(f => f.name === file.name)) {
+            // Criar arquivo físico de teste na pasta uploads
+            const uniqueName = `seed-${randomUUID()}-${file.name.replace(/\s+/g, '_')}`;
+            const uploadsDir = join(process.cwd(), 'uploads');
+            if (!fs.existsSync(uploadsDir)) {
+              fs.mkdirSync(uploadsDir, { recursive: true });
+            }
+            fs.writeFileSync(join(uploadsDir, uniqueName), `Arquivo de comprovante simulado para ${file.name}.`);
+            
+            selected.push({
+              name: file.name,
+              size: file.size,
+              data: `/uploads/${uniqueName}`,
+            });
+          }
+        }
+        attachments = selected;
+      }
+
       this.create(userId, {
         description: item.desc,
         category: item.cat,
+        subcategory,
         type: item.type as 'INCOME' | 'EXPENSE',
         observations: 'Lorum ipsum dolor sit amet consectetur adipiscing elit',
         amount: Number(amount.toFixed(2)),
         date: date.toISOString(),
+        attachments,
       });
     }
   }

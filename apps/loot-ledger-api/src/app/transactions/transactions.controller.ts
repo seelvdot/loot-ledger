@@ -43,6 +43,21 @@ export class TransactionsController {
     return this.transactionsService.remove(this.getUserId(headers), id);
   }
 
+  @Get('categories')
+  getCategories(@Headers() headers: any) {
+    return this.transactionsService.getCategories(this.getUserId(headers));
+  }
+
+  @Get('subcategories')
+  getSubcategories(@Headers() headers: any) {
+    return this.transactionsService.getSubcategories(this.getUserId(headers));
+  }
+
+  @Get('widget-query')
+  getWidgetData(@Headers() headers: any, @Query() query: any) {
+    return this.transactionsService.getWidgetData(this.getUserId(headers), query);
+  }
+
   @Get('summary')
   getSummary(@Headers() headers: any) {
     return this.transactionsService.getSummary(this.getUserId(headers));

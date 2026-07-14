@@ -1,0 +1,16 @@
+node_modules
+dist
+.next
+.nx
+.git
+.gitignore
+.prettierignore
+.editorconfig
+README.md
+*.log
+.env*
+CVS
+.svn
+.hg
+.git
+.DS_Store

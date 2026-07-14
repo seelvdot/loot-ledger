@@ -1,5 +1,4 @@
 import '@radix-ui/themes/styles.css';
-import { Theme } from '@radix-ui/themes';
 import './global.css';
 
 import { Metadata } from 'next';
@@ -12,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 import { ToastProvider } from '../hooks/useToast';
+import { ThemeProvider } from '../components/ThemeProvider';
 
 export default function RootLayout({
   children,
@@ -28,16 +28,16 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className="transition-colors duration-200">
         <ToastProvider>
-          <Theme accentColor="lime" radius="none" appearance="dark">
+          <ThemeProvider>
             <div className="vhs-overlay">
               <div className="item item--red"></div>
               <div className="item item--green"></div>
               <div className="item item--blue"></div>
             </div>
             {children}
-          </Theme>
+          </ThemeProvider>
         </ToastProvider>
       </body>
     </html>

@@ -6,10 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { apiService } from '../../services/api.service';
-import { Button, LCard, TextField } from '@loot-ledger/ui';
-import { Text } from '@radix-ui/themes';
+import { Button, Card, InputField } from '@core/evokit';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
-import { ArrowRight, At, LockHexagon, Password } from '@mynaui/icons-react';
+import { At, LockHexagon, Password } from '@mynaui/icons-react';
 
 const loginSchema = z.object({
   email: z
@@ -67,71 +67,58 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center">
+    <div className="w-full h-screen flex items-center justify-center relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="min-w-112.5">
-        <LCard>
+        <Card>
           <div className="p-8 pb-2">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="font-space-grotesk flex flex-col gap-12">
                 <div>
-                  <div className="uppercase text-xl text-neutral-100 flex gap-2">
+                  <div className="uppercase text-xl text-foreground flex gap-2">
                     <LockHexagon
                       strokeWidth={2}
-                      className="text-lime-300"
+                      className="text-primary"
                       size={28}
                     />
-                    Secure_auth
+                    Secure auth
                   </div>
-                  <div className="bg-lime-300 h-0.5 w-14 mt-3 mb-1.5"></div>
-                  <p className="text-neutral-400 text-xs uppercase tracking-wide">
+                  <div className="bg-primary h-0.5 w-14 mt-3 mb-1.5"></div>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wide">
                     Inicializar sequência biométrica ou manual
                   </p>
                 </div>
                 <div className="flex flex-col gap-6">
                   <div>
-                    <p
-                      className={`uppercase text-[10px] mb-1 ${errors.email ? 'text-red-400' : 'text-lime-300'}`}
-                    >
-                      {errors.email ? 'EMAIL_ERROR' : 'EMAIL_ACCESS'}
-                    </p>
-                    <TextField.Root
-                      placeholder="EMAIL_TOKEN"
-                      size="3"
-                      className="text-xs!"
-                      color={errors.email ? 'red' : 'lime'}
+                    <InputField
+                      label={errors.email ? 'EMAIL ERROR' : 'EMAIL ACCESS'}
+                      placeholder="EMAIL TOKEN"
+                      prefix={<At strokeWidth={1} size={18} />}
                       {...register('email')}
                       disabled={loading}
-                    >
-                      <TextField.Slot>
-                        <At strokeWidth={1} size={18} />
-                      </TextField.Slot>
-                    </TextField.Root>
+                      error={errors.email?.message}
+                    />
                   </div>
                   <div>
-                    <p
-                      className={`uppercase text-[10px] mb-1 ${errors.password ? 'text-red-400' : 'text-lime-300'}`}
-                    >
-                      {errors.password ? 'PASSWORD_ERROR' : 'PASSWORD_ACCESS'}
-                    </p>
-                    <TextField.Root
-                      placeholder="PASSWORD_TOKEN"
-                      size="3"
-                      className="text-xs!"
+                    <InputField
+                      label={errors.password ? 'PASSWORD ERROR' : 'PASSWORD ACCESS'}
+                      placeholder="PASSWORD TOKEN"
                       type="password"
-                      color={errors.password ? 'red' : 'lime'}
+                      prefix={<Password strokeWidth={1} size={18} />}
                       {...register('password')}
                       disabled={loading}
-                    >
-                      <TextField.Slot>
-                        <Password strokeWidth={1} size={18} />
-                      </TextField.Slot>
-                    </TextField.Root>
+                      error={errors.password?.message}
+                    />
                   </div>
                 </div>
                 <Button
-                  className="w-full! uppercase! cursor-pointer!"
-                  size="3"
-                  disabled={loading}
+                   type="submit"
+                   className="w-full!"
+                   size="lg"
+                   disabled={loading}
+                   loading={loading}
                 >
                   {loading ? 'Acessando' : 'Entrar'}
                 </Button>
@@ -139,13 +126,13 @@ export default function LoginPage() {
               <div className="h-10 flex justify-end items-center mt-2">
                 {loading && (
                   <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 bg-lime-300 animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 bg-primary animate-pulse"></div>
                     <div
-                      className="w-1.5 h-1.5 bg-lime-300 animate-pulse"
+                      className="w-1.5 h-1.5 bg-primary animate-pulse"
                       style={{ animationDelay: '0.2s' }}
                     ></div>
                     <div
-                      className="w-1.5 h-1.5 bg-lime-300 animate-pulse"
+                      className="w-1.5 h-1.5 bg-primary animate-pulse"
                       style={{ animationDelay: '0.4s' }}
                     ></div>
                   </div>
@@ -155,7 +142,7 @@ export default function LoginPage() {
                     {[1, 2, 3].map((item) => (
                       <div
                         key={item}
-                        className="w-1.5 h-1.5 bg-neutral-300/25"
+                        className="w-1.5 h-1.5 bg-muted"
                       ></div>
                     ))}
                   </div>
@@ -163,7 +150,7 @@ export default function LoginPage() {
               </div>
             </form>
           </div>
-        </LCard>
+        </Card>
       </div>
     </div>
   );

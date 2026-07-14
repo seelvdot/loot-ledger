@@ -1,0 +1,93 @@
+{
+  "name": "widget_mfe",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/widget-mfe/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/widget-mfe",
+        "index": "apps/widget-mfe/src/index.html",
+        "baseHref": "/",
+        "main": "apps/widget-mfe/src/main.ts",
+        "tsConfig": "apps/widget-mfe/tsconfig.app.json",
+        "assets": [
+          "apps/widget-mfe/src/favicon.ico",
+          "apps/widget-mfe/src/assets"
+        ],
+        "styles": ["apps/widget-mfe/src/styles.css"],
+        "scripts": [],
+        "webpackConfig": "apps/widget-mfe/webpack.config.ts",
+        "postcssConfig": "apps/widget-mfe/postcss.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/widget-mfe/src/environments/environment.ts",
+              "with": "apps/widget-mfe/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "webpackConfig": "apps/widget-mfe/webpack.config.prod.ts"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/react:module-federation-dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "widget_mfe:build",
+        "hmr": true,
+        "port": 4200
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "widget_mfe:build:development"
+        },
+        "production": {
+          "buildTarget": "widget_mfe:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/widget-mfe/jest.config.cts"
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/react:module-federation-static-server",
+      "defaultConfiguration": "production",
+      "options": {
+        "serveTarget": "widget_mfe:serve"
+      },
+      "configurations": {
+        "development": {
+          "serveTarget": "widget_mfe:serve:development"
+        },
+        "production": {
+          "serveTarget": "widget_mfe:serve:production"
+        }
+      }
+    }
+  }
+}

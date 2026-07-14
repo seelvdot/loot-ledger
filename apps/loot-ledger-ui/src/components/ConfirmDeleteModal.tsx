@@ -1,8 +1,6 @@
 'use client';
 
-import { Button, LCard } from '@loot-ledger/ui';
-import { DangerCircle } from '@mynaui/icons-react';
-import { Text, Heading } from '@radix-ui/themes';
+import { Button, Modal } from '@core/evokit';
 
 interface ConfirmDeleteModalProps {
   onClose: () => void;
@@ -18,44 +16,38 @@ export default function ConfirmDeleteModal({
   message = 'Esta ação não pode ser desfeita. Deseja continuar?',
 }: ConfirmDeleteModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
-      <div className="w-full max-w-sm">
-        <LCard>
-          <div className="p-4">
-            <header className="mb-6 border-l-2 border-red-400 pl-4">
-              <Text className="text-red-400 text-[10px] uppercase font-space-grotesk block mb-1">
-                [security_warning]
-              </Text>
-              <Heading
-                size="4"
-                className="text-neutral-100 uppercase font-space-grotesk!"
-              >
-                {title}
-              </Heading>
-            </header>
+    <Modal
+      open={true}
+      onClose={onClose}
+      title={title}
+      className="max-w-sm"
+    >
+      <div className="flex flex-col gap-4 text-muted-foreground text-sm font-space-grotesk">
+        <div className="border-l-2 border-rose-400/80 pl-4 mb-4">
+          <span
+            className="text-rose-400 text-[10px] uppercase block mb-1"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            [SECURITY WARNING]
+          </span>
+          <p className="text-foreground text-sm">{message}</p>
+        </div>
 
-            <div className="flex gap-4 items-start mb-8 text-neutral-400">
-              <Text size="2">{message}</Text>
-            </div>
-
-            <div className="flex gap-4 justify-end">
-              <Button
-                variant="outline"
-                className="flex-1 uppercase! cursor-pointer!"
-                onClick={onClose}
-              >
-                Cancelar
-              </Button>
-              <Button
-                className="flex-1 uppercase! cursor-pointer!"
-                onClick={onConfirm}
-              >
-                Deletar
-              </Button>
-            </div>
-          </div>
-        </LCard>
+        <div className="flex gap-4 justify-end">
+          <Button
+            variant="outline"
+            onClick={onClose}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+          >
+            Deletar
+          </Button>
+        </div>
       </div>
-    </div>
+    </Modal>
   );
 }

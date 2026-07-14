@@ -52,4 +52,12 @@ export class TransactionService {
   static async delete(id: string): Promise<boolean> {
     return apiService.delete<boolean>(`/transactions/${id}`);
   }
+
+  static async getCategories(): Promise<string[]> {
+    return apiService.get<string[]>('/transactions/categories');
+  }
+
+  static async getSubcategories(): Promise<string[]> {
+    return apiService.get<string[]>('/transactions/subcategories');
+  }
 }

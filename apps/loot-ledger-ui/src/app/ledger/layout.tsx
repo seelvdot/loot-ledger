@@ -1,10 +1,11 @@
 'use client';
 
-import { Avatar, LNavbar } from '@loot-ledger/ui';
-import { DropdownMenu, Heading, Text } from '@radix-ui/themes';
+import { Dropdown, DropdownItem, DropdownLabel } from '@core/evokit';
 import { UserHexagon } from '@mynaui/icons-react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '../../hooks/useAuth';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function RootLayout({
   children,
@@ -29,39 +30,58 @@ export default function RootLayout({
 
   return (
     <>
-      <LNavbar
-        itens={menuItems}
-        rightContent={
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
+      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border flex justify-between items-center px-6 py-4 font-space-grotesk gap-10">
+        <h1 className="font-bold text-lg text-primary uppercase" style={{ fontFamily: 'var(--font-header)' }}>
+          Loot Ledger
+        </h1>
+        <ul className="flex-1 flex gap-6">
+          {menuItems.map((item) => (
+            <li
+              key={item.name}
+              className={`uppercase text-sm font-medium transition-colors duration-300 ${
+                pathname === item.href ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+              }`}
+              style={{ fontFamily: 'var(--font-header)' }}
+            >
+              <Link href={item.href}>
+                {pathname === item.href ? '> ' : ''} {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <Dropdown
+            align="right"
+            trigger={
               <UserHexagon
                 size={28}
                 strokeWidth={2}
-                className="text-lime-400/75 hover:text-lime-400 transition-colors duration-300"
-              ></UserHexagon>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content size="1" className="backdrop-blur-md">
-              <DropdownMenu.Label className="font-space-grotesk uppercase text-sm text-neutral-300 p-2 font-medium pb-3 border-b border-neutral-400/50 mb-2">
-                Minha Conta
-              </DropdownMenu.Label>
-              <DropdownMenu.Item
-                className="flex justify-center font-space-grotesk uppercase text-sm p-2 font-medium group text-neutral-400"
-                onClick={handleLogout}
-              >
-                Sair
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        }
-      />
+                className="text-primary/75 hover:text-primary transition-colors duration-300 cursor-pointer"
+              />
+            }
+          >
+            <DropdownLabel>Minha Conta</DropdownLabel>
+            <DropdownItem onClick={handleLogout}>
+              Sair
+            </DropdownItem>
+          </Dropdown>
+        </div>
+      </nav>
       <main className="py-6 container">
-        <header className="mb-10 border-l-3 border-lime-300 pl-3">
-          <Text className="text-lime-300 text-[10px] uppercase font-space-grotesk">
-            [active_session]
-          </Text>
-          <Heading className="text-neutral-100 uppercase font-space-grotesk!">
+        <header className="mb-10 border-l-3 border-primary pl-3">
+          <span
+            className="text-primary text-[10px] uppercase block mb-1"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            [ACTIVE SESSION]
+          </span>
+          <h2
+            className="text-foreground uppercase font-bold text-2xl"
+            style={{ fontFamily: 'var(--font-header)' }}
+          >
             {menuItems.find((item) => item.href === pathname)?.label}
-          </Heading>
+          </h2>
         </header>
         <section className="">{children}</section>
       </main>
