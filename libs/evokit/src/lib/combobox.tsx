@@ -83,7 +83,7 @@ export function Combobox({
   };
 
   const selectedOption = options.find(o => o.value === value);
-  const displayLabel = selectedOption ? selectedOption.label : "";
+  const displayLabel = selectedOption ? selectedOption.label : (value || "");
 
   return (
     <div className="flex flex-col gap-1.5 w-full" ref={ref}>

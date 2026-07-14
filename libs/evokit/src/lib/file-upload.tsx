@@ -159,11 +159,7 @@ export function FileUploadZone({
                     f.data.startsWith('http') || f.data.startsWith('data:')
                       ? f.data
                       : (() => {
-                          const apiHost =
-                            process.env.NEXT_PUBLIC_API_URL?.replace(
-                              '/api',
-                              '',
-                            );
+                          const apiHost = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001';
                           const normalizedPath = f.data.startsWith('/uploads/')
                             ? `/api${f.data}`
                             : f.data;

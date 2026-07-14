@@ -58,6 +58,7 @@ export default function TransactionModal({
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema) as any,
@@ -99,12 +100,28 @@ export default function TransactionModal({
     });
   };
 
-  const categoryOptions = categories.map((cat) => ({
+  const watchCategory = watch('category');
+  const watchSubcategory = watch('subcategory');
+
+  // Adiciona a categoria selecionada dinamicamente caso seja uma nova (customizada)
+  const categoryList = [...categories];
+  if (watchCategory && !categoryList.includes(watchCategory)) {
+    categoryList.push(watchCategory);
+  }
+  const categoryOptions = categoryList.map((cat) => ({
     value: cat,
     label: cat.toUpperCase(),
   }));
 
-  const subcategoryOptions = subcategories.map((sub) => ({
+  // Adiciona as subcategorias selecionadas dinamicamente caso sejam novas (customizadas)
+  const selectedSubcategories = watchSubcategory ? watchSubcategory.split(',').filter(Boolean) : [];
+  const subcategoryList = [...subcategories];
+  selectedSubcategories.forEach((sub) => {
+    if (!subcategoryList.includes(sub)) {
+      subcategoryList.push(sub);
+    }
+  });
+  const subcategoryOptions = subcategoryList.map((sub) => ({
     value: sub,
     label: sub.toUpperCase(),
   }));

@@ -122,7 +122,12 @@ export default function WidgetCardRenderer({
 
   if (loading) {
     return (
-      <Card className={cn(cardHeight, "flex items-center justify-center border-primary/10")}>
+      <Card
+        className={cn(
+          cardHeight,
+          'flex items-center justify-center border-primary/10',
+        )}
+      >
         <span className="text-[10px] text-primary/40 font-mono tracking-widest animate-pulse uppercase">
           [CARREGANDO DADOS...]
         </span>
@@ -132,7 +137,12 @@ export default function WidgetCardRenderer({
 
   if (error) {
     return (
-      <Card className={cn(cardHeight, "flex flex-col justify-center items-center text-center p-4 border-rose-500/20 bg-rose-950/10")}>
+      <Card
+        className={cn(
+          cardHeight,
+          'flex flex-col justify-center items-center text-center p-4 border-rose-500/20 bg-rose-950/10',
+        )}
+      >
         <span className="text-rose-400 font-mono text-[10px] uppercase font-bold tracking-widest mb-1">
           [ERRO DE CONEXÃO]
         </span>
@@ -147,7 +157,12 @@ export default function WidgetCardRenderer({
   const isIncome = widget.filterType === 'INCOME';
 
   return (
-    <Card className={cn(cardHeight, "flex flex-col justify-between border-border bg-card font-space-grotesk p-4 relative overflow-hidden select-none")}>
+    <Card
+      className={cn(
+        cardHeight,
+        'flex flex-col justify-between border-border bg-card font-space-grotesk p-4 relative overflow-hidden select-none',
+      )}
+    >
       <div>
         <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-2 mb-3">
           <span className="text-xs font-bold text-foreground font-space-grotesk tracking-widest uppercase">
