@@ -73,19 +73,21 @@ export function LedgerNav() {
       </nav>
 
       {/* Header da seção atual */}
-      <header className="mb-10 border-l-3 border-primary pl-3">
-        <span
-          className="text-primary text-[10px] uppercase block mb-1"
-          style={{ fontFamily: 'var(--font-mono)' }}
-        >
-          [ACTIVE SESSION]
-        </span>
-        <h2
-          className="text-foreground uppercase font-bold text-2xl"
-          style={{ fontFamily: 'var(--font-header)' }}
-        >
-          {currentPage?.label ?? 'Ledger'}
-        </h2>
+      <header className="container pt-10">
+        <div className="mb-4 border-l-3 pl-3 border-primary">
+          <span
+            className="text-primary text-[10px] uppercase block mb-1"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            [ACTIVE SESSION]
+          </span>
+          <h2
+            className="text-foreground uppercase font-bold text-2xl"
+            style={{ fontFamily: 'var(--font-header)' }}
+          >
+            {currentPage?.label ?? 'Ledger'}
+          </h2>
+        </div>
       </header>
     </>
   );
